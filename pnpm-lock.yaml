@@ -56,15 +56,6 @@ importers:
 
   packages/config: {}
 
-  packages/ffi:
-    dependencies:
-      fuse.js:
-        specifier: ^7.1.0
-        version: 7.1.0
-      vscode-jsonrpc:
-        specifier: ^8.2.1
-        version: 8.2.1
-
 packages:
 
   '@antfu/eslint-config@4.18.0':
