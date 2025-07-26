@@ -36,5 +36,23 @@ pub fn main() -> Nil {
     }
   })
 
+  helper.on(connection, "show_message", fn(params) {
+    {
+      case decode.run(params, decode.string) {
+        Ok(message) -> helper.show_message(connection, message)
+        _ -> Nil
+      }
+    }
+  })
+
+  helper.on(connection, "copy_text", fn(params) {
+    {
+      case decode.run(params, decode.string) {
+        Ok(message) -> helper.copy_text(connection, message)
+        _ -> Nil
+      }
+    }
+  })
+
   jsonrpc.listen(connection)
 }
