@@ -32,6 +32,8 @@ pub type JSONRPCResponse {
   JSONRPCResponse(
     title: String,
     sub_title: option.Option(String),
+    auto_complete_text: option.Option(String),
+    title_highlight_data: option.Option(List(Int)),
     glyph: option.Option(Glyph),
     ico_path: option.Option(String),
     json_rpc_action: JSONRPCAction,
@@ -78,6 +80,10 @@ pub fn to_json(data: List(JSONRPCResponse)) -> List(Json) {
       [
         item.sub_title |> option.map(fn(x) { #("subTitle", string(x)) }),
         glyph |> option.map(fn(x) { #("glyph", object(x)) }),
+        item.auto_complete_text
+          |> option.map(fn(x) { #("autoCompleteText", string(x)) }),
+        item.title_highlight_data
+          |> option.map(fn(x) { #("titleHighlightData", array(x, int)) }),
         item.ico_path |> option.map(fn(x) { #("icoPath", string(x)) }),
         item.score |> option.map(fn(x) { #("score", int(x)) }),
         context_data,

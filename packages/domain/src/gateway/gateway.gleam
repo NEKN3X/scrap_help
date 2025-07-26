@@ -6,7 +6,7 @@ import gleam/javascript/promise
 import gleam/list
 import gleam/result
 
-const timeout = 10_000
+const timeout = 60_000
 
 fn cache(db: db.Schema) {
   case date.now() - db.timestamp {

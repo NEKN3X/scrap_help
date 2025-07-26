@@ -38,7 +38,7 @@ pub fn literal() -> Parser(List(String)) {
   |> alt(pure(fac))
 }
 
-/// synonym := (literal | 空文字 (+"|"synonym | ε)
+/// synonym := (literal | 空文字) (+"|"synonym | ε)
 pub fn synonym() -> Parser(List(String)) {
   use lit <- bind(literal() |> alt(pure([""])))
   {

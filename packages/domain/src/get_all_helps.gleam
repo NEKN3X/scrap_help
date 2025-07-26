@@ -3,6 +3,8 @@ import core/helpfeel_parser
 import core/scrapbox
 import gleam/dict
 import gleam/list
+import gleam/regexp
+import gleam/result
 import gleam/string
 import public_types
 
@@ -23,29 +25,31 @@ type ProjectWithHelps {
 }
 
 fn replace_glossary(glossary: public_types.Glossary, text: String) {
-  let replace = fn(pair, text) {
-    let #(key, value) = pair
-    string.replace(text, "{" <> key <> "}", value)
-  }
-
-  case glossary {
+  let result = case glossary {
     public_types.Glossary(dict) ->
       dict
-      |> dict.to_list
-      |> list.fold(text, fn(acc, pair) { replace(pair, acc) })
+      |> dict.fold(text, fn(acc, key, value) {
+        string.replace(acc, "{" <> key <> "}", value)
+      })
+  }
+  let assert Ok(re) = regexp.from_string("\\{(.*)\\}")
+  case regexp.check(re, result) {
+    True -> Error(Nil)
+    _ -> Ok(result)
   }
 }
 
 fn expand_glossary(project: ProjectWithGlossaryAndHelps, glossary) {
   let helps = {
     use help <- list.map(project.helps)
-    let replaced_command = replace_glossary(glossary, help.command)
-    let replaced_content = replace_glossary(glossary, help.content)
+    use replaced_command <- result.try(replace_glossary(glossary, help.command))
+    use replaced_content <- result.try(replace_glossary(glossary, help.content))
     help
     |> help.set_command(replaced_command)
     |> help.set_content(replaced_content)
+    |> Ok
   }
-  ProjectWithHelps(project.project, helps)
+  ProjectWithHelps(project.project, helps |> result.values)
 }
 
 pub fn workflow() {

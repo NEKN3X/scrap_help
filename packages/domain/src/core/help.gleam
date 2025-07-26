@@ -54,19 +54,11 @@ fn scan_url_help(text) {
   Error(Nil)
 }
 
-fn pairs(list) {
-  case list {
-    [line1, line2, ..xs] -> list.append([#(line1, line2)], pairs([line2, ..xs]))
-    [] -> []
-    _ -> []
-  }
-}
-
 pub fn extract(project: scrapbox.ScrapboxProject) {
   project.pages
   |> list.map(fn(page) {
     page.lines
-    |> pairs
+    |> list.window_by_2
     |> list.filter_map(fn(pair) {
       case helpfeel.scan_helpfeel({ pair.0 }.text) {
         Error(_) -> Error(Nil)
