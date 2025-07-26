@@ -28,10 +28,9 @@ pub fn make_result(
       sub_title: None,
       glyph: None,
       ico_path: None,
-      json_rpc_action: response.JSONRPCAction(
-        method: "example.method",
-        parameters: [],
-      ),
+      json_rpc_action: response.JSONRPCAction(method: "open_url", parameters: [
+        response.StringParam("https://example.com"),
+      ]),
       context_data: None,
       score: None,
     ),

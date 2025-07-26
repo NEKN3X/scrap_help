@@ -27,5 +27,14 @@ pub fn main() -> Nil {
     make_result.make_result(connection, query, settings, context)
   })
 
+  helper.on(connection, "open_url", fn(params) {
+    {
+      case decode.run(params, decode.list(decode.string)) {
+        Ok([url]) -> helper.open_url(connection, url)
+        _ -> Nil
+      }
+    }
+  })
+
   jsonrpc.listen(connection)
 }
