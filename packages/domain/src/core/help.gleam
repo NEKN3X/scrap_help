@@ -74,9 +74,9 @@ pub fn extract(project: scrapbox.ScrapboxProject) {
               ScrapUrlHelpWithTitle(
                 project.name,
                 page.title,
-                { pair.0 },
                 pair.0,
-                pair.1,
+                content: pair.1,
+                title: pair.0,
               )
             })
           })
@@ -98,8 +98,8 @@ pub fn extract(project: scrapbox.ScrapboxProject) {
                     project.name,
                     page.title,
                     command,
-                    url,
-                    title,
+                    content: url,
+                    title: title,
                   )
               }
             })
