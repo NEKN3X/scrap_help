@@ -56,9 +56,7 @@ importers:
 
   packages/config: {}
 
-  packages/core: {}
-
-  packages/gateway: {}
+  packages/domain: {}
 
 packages:
 
