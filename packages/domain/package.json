@@ -1,5 +1,5 @@
 {
-  "name": "@repo/gateway",
+  "name": "@repo/domain",
   "version": "1.0.0",
   "scripts": {
     "build": "gleam build",

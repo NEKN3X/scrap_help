@@ -1,10 +1,10 @@
-import core
-import db
-import ffi/date
+import core/scrapbox
+import gateway/db
+import gateway/ffi/date
+import gateway/scrapbox_api
 import gleam/javascript/promise
 import gleam/list
 import gleam/result
-import scrapbox_api
 
 const timeout = 60_000
 
@@ -29,7 +29,7 @@ pub fn get_projects(projects, sid) {
         let project_cache =
           db.projects
           |> list.find(fn(p) { p.name == project })
-          |> result.unwrap(core.ScrapboxProject(project, []))
+          |> result.unwrap(scrapbox.ScrapboxProject(project, []))
         titles
         |> list.map(fn(title) {
           let page_cache =
@@ -43,7 +43,9 @@ pub fn get_projects(projects, sid) {
         })
         |> promise.await_list
         |> promise.map(result.values)
-        |> promise.map(fn(pages) { Ok(core.ScrapboxProject(project, pages)) })
+        |> promise.map(fn(pages) {
+          Ok(scrapbox.ScrapboxProject(project, pages))
+        })
       })
       |> promise.await_list
       |> promise.map(result.values)

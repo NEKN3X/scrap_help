@@ -1,4 +1,4 @@
-import core
+import core/scrapbox
 import gleam/dynamic/decode
 import gleam/fetch
 import gleam/http/request
@@ -30,7 +30,7 @@ pub fn title_decoder() {
   use id <- decode.field("id", decode.string)
   use title <- decode.field("title", decode.string)
   use updated <- decode.field("updated", decode.int)
-  decode.success(core.ScrapboxTitle(id, title, updated))
+  decode.success(scrapbox.ScrapboxTitle(id, title, updated))
 }
 
 pub fn fetch_titles(project: String, sid: Option(String)) {
@@ -54,7 +54,7 @@ pub fn fetch_titles(project: String, sid: Option(String)) {
 pub fn lines_decoder() {
   use id <- decode.field("id", decode.string)
   use text <- decode.field("text", decode.string)
-  decode.success(core.ScrapboxPageLine(id, text))
+  decode.success(scrapbox.ScrapboxPageLine(id, text))
 }
 
 pub fn page_decoder() {
@@ -64,7 +64,7 @@ pub fn page_decoder() {
   use updated <- decode.field("updated", decode.int)
   use helpfeels <- decode.field("helpfeels", decode.list(decode.string))
   use lines <- decode.field("lines", decode.list(lines_decoder()))
-  decode.success(core.ScrapboxPage(
+  decode.success(scrapbox.ScrapboxPage(
     id,
     title,
     created,
