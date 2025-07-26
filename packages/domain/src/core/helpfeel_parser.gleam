@@ -54,17 +54,9 @@ pub fn synonym() -> Parser(List(String)) {
 
 pub fn factor() -> Parser(List(String)) {
   {
-    use _ <- bind({
-      use symbol <- bind(parser.string("("))
-      use _ <- bind(parser.many_blank())
-      pure(symbol)
-    })
+    use _ <- bind(parser.string("("))
     use syn <- bind(synonym())
-    use _ <- bind({
-      use _ <- bind(parser.many_blank())
-      use symbol <- bind(parser.string(")"))
-      pure(symbol)
-    })
+    use _ <- bind(parser.string(")"))
     pure(syn)
   }
   |> alt(some_str())
