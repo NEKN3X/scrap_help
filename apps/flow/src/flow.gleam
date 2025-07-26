@@ -1,29 +1,13 @@
 import ffi/jsonrpc
 import gleam/dynamic/decode
-import gleam/list
-import gleam/regexp
-import gleam/string
 import make_result
 import plugin/helper
-
-pub fn settings_decoder() {
-  use projects <- decode.field("projects", decode.string)
-  use sid <- decode.field("sid", decode.string)
-  use ignore_title_pattern <- decode.field(
-    "ignore_title_pattern",
-    decode.string,
-  )
-  use bookmark_pattern <- decode.field("bookmark_pattern", decode.string)
-  let projects = projects |> string.split(",") |> list.map(string.trim)
-  let assert Ok(ignore_re) = regexp.from_string(ignore_title_pattern)
-  let assert Ok(bookmark_re) = regexp.from_string(bookmark_pattern)
-  decode.success(make_result.Settings(projects, sid, ignore_re, bookmark_re))
-}
+import settings
 
 pub fn main() -> Nil {
   let connection = jsonrpc.create_connection()
   helper.initialize(connection, fn(context) {
-    use query, settings <- helper.query(connection, settings_decoder())
+    use query, settings <- helper.query(connection, settings.decoder())
     make_result.make_result(connection, query, settings, context)
   })
 
