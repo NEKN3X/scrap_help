@@ -1,0 +1,22 @@
+# $schema: https://www.flowlauncher.com/schemas/settings-template.schema.json
+body:
+  - type: input
+    attributes:
+      name: projects
+      label: projects
+      defaultValue: ''
+  - type: input
+    attributes:
+      name: sid
+      label: sid
+      defaultValue: ''
+  - type: input
+    attributes:
+      name: ignore_title_pattern
+      label: ignore_title_pattern
+      defaultValue: ''
+  - type: input
+    attributes:
+      name: bookmark_pattern
+      label: bookmark_pattern
+      defaultValue: '\[#\s+\[.*\S\s+(http.*)\]\]|\[#\s+\[(http.*\S)\s+\S.*\]\]|\[#\s+\[(http.*\S)\]\]'

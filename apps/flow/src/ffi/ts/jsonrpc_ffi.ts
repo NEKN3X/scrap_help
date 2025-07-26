@@ -8,6 +8,14 @@ export function createConnection() {
   )
 }
 
+export function initialize(connection: rpc.MessageConnection, handler: any) {
+  return connection.onRequest('initialize', handler)
+}
+
+export function onQuery(connection: rpc.MessageConnection, handler: any) {
+  return connection.onRequest('query', handler)
+}
+
 export function onRequest(connection: rpc.MessageConnection, method: string, handler: any) {
   return connection.onRequest(method, handler)
 }
