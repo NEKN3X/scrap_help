@@ -1,32 +1,10 @@
+import core
 import gleam/dynamic/decode
 import gleam/fetch
 import gleam/http/request
 import gleam/javascript/promise
 import gleam/option.{type Option, None, Some}
 import gleam/result
-
-pub type ScrapboxTitle {
-  ScrapboxTitle(id: String, title: String, updated: Int)
-}
-
-pub type ScrapboxProject {
-  ScrapboxProject(name: String, pages: List(ScrapboxPage))
-}
-
-pub type ScrapboxPage {
-  ScrapboxPage(
-    id: String,
-    title: String,
-    created: Int,
-    updated: Int,
-    helpfeels: List(String),
-    lines: List(ScrapboxPageLine),
-  )
-}
-
-pub type ScrapboxPageLine {
-  ScrapboxPageLine(id: String, text: String)
-}
 
 fn fetch_scrapbox(path: String, sid: Option(String)) {
   let host = "scrapbox.io"
@@ -52,7 +30,7 @@ pub fn title_decoder() {
   use id <- decode.field("id", decode.string)
   use title <- decode.field("title", decode.string)
   use updated <- decode.field("updated", decode.int)
-  decode.success(ScrapboxTitle(id, title, updated))
+  decode.success(core.ScrapboxTitle(id, title, updated))
 }
 
 pub fn fetch_titles(project: String, sid: Option(String)) {
@@ -76,7 +54,7 @@ pub fn fetch_titles(project: String, sid: Option(String)) {
 pub fn lines_decoder() {
   use id <- decode.field("id", decode.string)
   use text <- decode.field("text", decode.string)
-  decode.success(ScrapboxPageLine(id, text))
+  decode.success(core.ScrapboxPageLine(id, text))
 }
 
 pub fn page_decoder() {
@@ -86,7 +64,14 @@ pub fn page_decoder() {
   use updated <- decode.field("updated", decode.int)
   use helpfeels <- decode.field("helpfeels", decode.list(decode.string))
   use lines <- decode.field("lines", decode.list(lines_decoder()))
-  decode.success(ScrapboxPage(id, title, created, updated, helpfeels, lines))
+  decode.success(core.ScrapboxPage(
+    id,
+    title,
+    created,
+    updated,
+    helpfeels,
+    lines,
+  ))
 }
 
 pub fn fetch_page(project: String, title: String, sid: Option(String)) {

@@ -1,3 +1,4 @@
+import core
 import gleam/dynamic/decode
 import gleam/json
 import gleam/list
@@ -8,7 +9,7 @@ import simplifile
 const filepath = "./db.json"
 
 pub type Schema {
-  Schema(projects: List(scrapbox_api.ScrapboxProject), timestamp: Int)
+  Schema(projects: List(core.ScrapboxProject), timestamp: Int)
 }
 
 pub fn default() {
@@ -18,7 +19,7 @@ pub fn default() {
 fn project_decoder() {
   use name <- decode.field("name", decode.string)
   use pages <- decode.field("pages", decode.list(scrapbox_api.page_decoder()))
-  decode.success(scrapbox_api.ScrapboxProject(name, pages))
+  decode.success(core.ScrapboxProject(name, pages))
 }
 
 fn decoder() {
@@ -33,13 +34,13 @@ pub fn read() {
 }
 
 fn to_json(schema: Schema) {
-  let line_to_json = fn(line: scrapbox_api.ScrapboxPageLine) {
+  let line_to_json = fn(line: core.ScrapboxPageLine) {
     json.object([
       #("id", json.string(line.id)),
       #("text", json.string(line.text)),
     ])
   }
-  let page_to_json = fn(page: scrapbox_api.ScrapboxPage) {
+  let page_to_json = fn(page: core.ScrapboxPage) {
     json.object([
       #("id", json.string(page.id)),
       #("title", json.string(page.title)),
@@ -52,7 +53,7 @@ fn to_json(schema: Schema) {
       #("lines", json.preprocessed_array(list.map(page.lines, line_to_json))),
     ])
   }
-  let project_to_json = fn(project: scrapbox_api.ScrapboxProject) {
+  let project_to_json = fn(project: core.ScrapboxProject) {
     json.object([
       #("name", json.string(project.name)),
       #("pages", json.preprocessed_array(list.map(project.pages, page_to_json))),

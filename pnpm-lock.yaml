@@ -56,6 +56,10 @@ importers:
 
   packages/config: {}
 
+  packages/core: {}
+
+  packages/gateway: {}
+
 packages:
 
   '@antfu/eslint-config@4.18.0':

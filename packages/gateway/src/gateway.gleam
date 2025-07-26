@@ -1,3 +1,4 @@
+import core
 import db
 import ffi/date
 import gleam/javascript/promise
@@ -28,7 +29,7 @@ pub fn get_projects(projects, sid) {
         let project_cache =
           db.projects
           |> list.find(fn(p) { p.name == project })
-          |> result.unwrap(scrapbox_api.ScrapboxProject(project, []))
+          |> result.unwrap(core.ScrapboxProject(project, []))
         titles
         |> list.map(fn(title) {
           let page_cache =
@@ -42,9 +43,7 @@ pub fn get_projects(projects, sid) {
         })
         |> promise.await_list
         |> promise.map(result.values)
-        |> promise.map(fn(pages) {
-          Ok(scrapbox_api.ScrapboxProject(project, pages))
-        })
+        |> promise.map(fn(pages) { Ok(core.ScrapboxProject(project, pages)) })
       })
       |> promise.await_list
       |> promise.map(result.values)
