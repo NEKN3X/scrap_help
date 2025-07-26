@@ -1,5 +1,5 @@
 import core/help
-import core/helpfeel
+import core/scrapbox
 import ffi/fuse
 import ffi/jsonrpc
 import gateway/gateway
@@ -38,12 +38,35 @@ pub fn make_result(
     _ -> public_types.Glossary(dict.from_list([#("query", terms)]))
   }
   get_all_helps.workflow().run(projects, glossary)
+  |> list.append(
+    projects
+    |> list.flat_map(fn(project) { pages_to_helps(project) }),
+  )
   |> fuse.search(query.search, fuse.FuseOptions(["command"]))
+  |> list.fold([], fn(acc: List(fuse.FuseResult(help.Help)), result) {
+    let find_dup = acc |> list.find(fn(r) { dup(r.item, result.item) })
+    case find_dup {
+      Ok(_) -> acc
+      _ -> acc |> list.append([result])
+    }
+  })
   |> list.map(fn(result) { help_to_item(result, ctx.metadata.action_keyword) })
 }
 
 fn scrapbox_url(project: String, page: String) {
   "https://scrapbox.io/" <> project <> "/" <> page
+}
+
+fn is_scrapbox_url(url: String) {
+  url |> string.starts_with("https://scrapbox.io/")
+}
+
+fn format_url(url: String) {
+  url
+  |> string.replace("https://scrapbox.io", "")
+  |> string.replace("https://", "")
+  |> string.replace("http://", "")
+  |> string.replace("www.", "")
 }
 
 fn help_to_item(result: fuse.FuseResult(help.Help), keyword: String) {
@@ -74,7 +97,9 @@ fn help_to_item(result: fuse.FuseResult(help.Help), keyword: String) {
         context_data: Some([
           response.JSONRPCResponse(
             title: "Open in Scrapbox",
-            sub_title: Some(scrapbox_url(result.item.project, result.item.page)),
+            sub_title: Some(
+              format_url(scrapbox_url(result.item.project, result.item.page)),
+            ),
             glyph: None,
             auto_complete_text: None,
             title_highlight_data: None,
@@ -95,40 +120,74 @@ fn help_to_item(result: fuse.FuseResult(help.Help), keyword: String) {
     help.ScrapUrlHelp(_, _, command, url) -> {
       response.JSONRPCResponse(
         title: command,
-        sub_title: Some(
-          url
-          |> string.replace("https://", "")
-          |> string.replace("http://", "")
-          |> string.replace("www.", ""),
-        ),
+        sub_title: Some(format_url(url)),
         auto_complete_text: Some(auto_complete_text),
         title_highlight_data: Some(highlight),
         glyph: None,
-        ico_path: Some("assets/globe-solid-full.png"),
+        ico_path: Some(case is_scrapbox_url(url) {
+          True -> "assets/note-sticky-solid-full.png"
+          False -> "assets/globe-solid-full.png"
+        }),
         json_rpc_action: response.JSONRPCAction("open_url", [
           response.StringParam(url),
         ]),
-        context_data: None,
+        context_data: Some([
+          response.JSONRPCResponse(
+            title: "Open in Scrapbox",
+            sub_title: Some(
+              format_url(scrapbox_url(result.item.project, result.item.page)),
+            ),
+            glyph: None,
+            auto_complete_text: None,
+            title_highlight_data: None,
+            ico_path: Some("assets/note-sticky-solid-full.png"),
+            json_rpc_action: response.JSONRPCAction("open_url", [
+              response.StringParam(scrapbox_url(
+                result.item.project,
+                result.item.page,
+              )),
+            ]),
+            context_data: None,
+            score: None,
+          ),
+        ]),
         score: Some(score),
       )
     }
-    help.ScrapUrlHelpWithTitle(_, _, command, url, title) -> {
+    help.ScrapUrlHelpWithTitle(_, _, command, url, _) -> {
       response.JSONRPCResponse(
         title: command,
-        sub_title: Some(
-          url
-          |> string.replace("https://", "")
-          |> string.replace("http://", "")
-          |> string.replace("www.", ""),
-        ),
+        sub_title: Some(format_url(url)),
         auto_complete_text: Some(auto_complete_text),
         title_highlight_data: Some(highlight),
         glyph: None,
-        ico_path: Some("assets/globe-solid-full.png"),
+        ico_path: Some(case is_scrapbox_url(url) {
+          True -> "assets/note-sticky-solid-full.png"
+          False -> "assets/globe-solid-full.png"
+        }),
         json_rpc_action: response.JSONRPCAction("open_url", [
           response.StringParam(url),
         ]),
-        context_data: None,
+        context_data: Some([
+          response.JSONRPCResponse(
+            title: "Open in Scrapbox",
+            sub_title: Some(
+              format_url(scrapbox_url(result.item.project, result.item.page)),
+            ),
+            glyph: None,
+            auto_complete_text: None,
+            title_highlight_data: None,
+            ico_path: Some("assets/note-sticky-solid-full.png"),
+            json_rpc_action: response.JSONRPCAction("open_url", [
+              response.StringParam(scrapbox_url(
+                result.item.project,
+                result.item.page,
+              )),
+            ]),
+            context_data: None,
+            score: None,
+          ),
+        ]),
         score: Some(score),
       )
     }
@@ -137,4 +196,13 @@ fn help_to_item(result: fuse.FuseResult(help.Help), keyword: String) {
 
 fn dup(a: help.Help, b: help.Help) {
   a.project == b.project && a.page == b.page && a.content == b.content
+}
+
+fn pages_to_helps(project: scrapbox.ScrapboxProject) {
+  project.pages
+  |> list.map(fn(page) {
+    let title = page.title
+    let url = scrapbox_url(project.name, title)
+    help.ScrapUrlHelp(project.name, title, title, url)
+  })
 }

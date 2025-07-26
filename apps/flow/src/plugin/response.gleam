@@ -71,7 +71,11 @@ pub fn to_json(data: List(JSONRPCResponse)) -> List(Json) {
       #("parameters", parameters),
     ])
   let context_data = case item.context_data {
-    Some(cd) -> Some(#("contextData", preprocessed_array(to_json(cd))))
+    Some(cd) ->
+      Some(#(
+        "contextData",
+        json.object([#("result", preprocessed_array(to_json(cd)))]),
+      ))
     None -> None
   }
   object(

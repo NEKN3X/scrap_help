@@ -1,4 +1,5 @@
 import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/javascript/promise
 import gleam/json
 
@@ -25,6 +26,13 @@ pub fn on_request_async(
   connection: MessageConnection,
   method: String,
   handler: fn(dynamic.Dynamic) -> promise.Promise(json.Json),
+) -> Nil
+
+@external(javascript, "./dist/jsonrpc_ffi.js", "onRequest")
+pub fn context_menu(
+  connection: MessageConnection,
+  method: String,
+  handler: fn(dynamic.Dynamic) -> decode.Dynamic,
 ) -> Nil
 
 @external(javascript, "./dist/jsonrpc_ffi.js", "onQuery")

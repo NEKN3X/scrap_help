@@ -11,6 +11,8 @@ pub fn main() -> Nil {
     make_result.make_result(connection, query, settings, context)
   })
 
+  helper.context_menu(connection)
+
   helper.on(connection, "open_url", fn(params) {
     {
       case decode.run(params, decode.list(decode.string)) {

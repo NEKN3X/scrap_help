@@ -1,6 +1,7 @@
 import ffi/jsonrpc
 import gleam/dynamic
 import gleam/dynamic/decode
+import gleam/function
 import gleam/javascript/promise
 import gleam/json
 import plugin/context
@@ -47,6 +48,10 @@ pub fn on(connection, method, handler: fn(dynamic.Dynamic) -> Nil) {
     handler(params)
     json.object([])
   })
+}
+
+pub fn context_menu(connection) {
+  jsonrpc.context_menu(connection, "context_menu", function.identity)
 }
 
 pub fn show_message(connection, message) {

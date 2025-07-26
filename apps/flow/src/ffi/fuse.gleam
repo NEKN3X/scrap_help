@@ -1,4 +1,3 @@
-import gleam/int
 import gleam/javascript/array
 import gleam/json
 import gleam/list
