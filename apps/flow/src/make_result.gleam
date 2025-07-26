@@ -14,36 +14,33 @@ pub fn make_result(
   settings: settings.Settings,
   context: context.Context,
 ) -> List(response.JSONRPCResponse) {
-  let result =
-    fuse.search(
-      [
-        response.JSONRPCResponse(
-          title: "Hello, Flow!",
-          sub_title: None,
-          glyph: None,
-          ico_path: None,
-          json_rpc_action: response.JSONRPCAction("open_url", [
-            response.StringParam("https://example.com"),
-          ]),
-          context_data: None,
-          score: None,
-        ),
-        response.JSONRPCResponse(
-          title: "Hello, World!",
-          sub_title: None,
-          glyph: None,
-          ico_path: None,
-          json_rpc_action: response.JSONRPCAction("open_url", [
-            response.StringParam("https://example.com"),
-          ]),
-          context_data: None,
-          score: None,
-        ),
-      ],
-      query.search,
-      fuse.FuseOptions(["title", "sub_title"]),
-    )
-
-  result
+  fuse.search(
+    [
+      response.JSONRPCResponse(
+        title: "Hello, Flow!",
+        sub_title: None,
+        glyph: None,
+        ico_path: None,
+        json_rpc_action: response.JSONRPCAction("open_url", [
+          response.StringParam("https://example.com"),
+        ]),
+        context_data: None,
+        score: None,
+      ),
+      response.JSONRPCResponse(
+        title: "Hello, World!",
+        sub_title: None,
+        glyph: None,
+        ico_path: None,
+        json_rpc_action: response.JSONRPCAction("open_url", [
+          response.StringParam("https://example.com"),
+        ]),
+        context_data: None,
+        score: None,
+      ),
+    ],
+    query.search,
+    fuse.FuseOptions(["title", "sub_title"]),
+  )
   |> list.map(fn(result) { result.item })
 }
