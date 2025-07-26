@@ -19,7 +19,7 @@ pub fn make_result(
       sub_title: None,
       glyph: None,
       ico_path: None,
-      json_rpc_action: response.JSONRPCAction(method: "open_url", parameters: [
+      json_rpc_action: response.JSONRPCAction("open_url", [
         response.StringParam("https://example.com"),
       ]),
       context_data: None,
