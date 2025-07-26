@@ -1,4 +1,5 @@
 import core/scrapbox
+import gateway/ffi/uri
 import gleam/dynamic/decode
 import gleam/fetch
 import gleam/http/request
@@ -75,7 +76,7 @@ pub fn page_decoder() {
 }
 
 pub fn fetch_page(project: String, title: String, sid: Option(String)) {
-  let path = "/pages/" <> project <> "/" <> title
+  let path = "/pages/" <> project <> "/" <> uri.encode_uri_component(title)
   {
     use resp <- promise.try_await(fetch_scrapbox(path, sid))
     use resp <- promise.map({

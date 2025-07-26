@@ -61,7 +61,27 @@ pub fn extract(project: scrapbox.ScrapboxProject) {
     |> list.window_by_2
     |> list.filter_map(fn(pair) {
       case helpfeel.scan_helpfeel({ pair.0 }.text) {
-        Error(_) -> Error(Nil)
+        Error(_) -> {
+          let assert Ok(re) =
+            regexp.from_string("^\\s*\\[#\\s+\\[(.*)\\s+(http.*)\\]\\].*$")
+          use _ <- result.try_recover({
+            case regexp.scan(re, { pair.1 }.text) {
+              [regexp.Match(_, [option.Some(title), option.Some(url)])] ->
+                Ok(#(title, url))
+              _ -> Error(Nil)
+            }
+            |> result.map(fn(pair) {
+              ScrapUrlHelpWithTitle(
+                project.name,
+                page.title,
+                { pair.0 },
+                pair.0,
+                pair.1,
+              )
+            })
+          })
+          Error(Nil)
+        }
         Ok(command) -> {
           scan_text_help({ pair.1 }.text)
           |> result.map(fn(text) {

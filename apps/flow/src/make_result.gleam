@@ -10,6 +10,7 @@ import gleam/int
 import gleam/javascript/promise
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/regexp
 import gleam/string
 import plugin/context
 import plugin/query
@@ -40,7 +41,9 @@ pub fn make_result(
   get_all_helps.workflow().run(projects, glossary)
   |> list.append(
     projects
-    |> list.flat_map(fn(project) { pages_to_helps(project) }),
+    |> list.flat_map(fn(project) {
+      pages_to_helps(project, settings.ignore_title_pattern)
+    }),
   )
   |> fuse.search(query.search, fuse.FuseOptions(["command"]))
   |> list.fold([], fn(acc: List(fuse.FuseResult(help.Help)), result) {
@@ -117,10 +120,13 @@ fn help_to_item(result: fuse.FuseResult(help.Help), keyword: String) {
         score: Some(score),
       )
     }
-    help.ScrapUrlHelp(_, _, command, url) -> {
+    help.ScrapUrlHelp(p, _, command, url) -> {
       response.JSONRPCResponse(
         title: command,
-        sub_title: Some(format_url(url)),
+        sub_title: Some(case is_scrapbox_url(url) {
+          True -> "/" <> p
+          False -> format_url(url)
+        }),
         auto_complete_text: Some(auto_complete_text),
         title_highlight_data: Some(highlight),
         glyph: None,
@@ -154,10 +160,13 @@ fn help_to_item(result: fuse.FuseResult(help.Help), keyword: String) {
         score: Some(score),
       )
     }
-    help.ScrapUrlHelpWithTitle(_, _, command, url, _) -> {
+    help.ScrapUrlHelpWithTitle(p, _, command, url, _) -> {
       response.JSONRPCResponse(
         title: command,
-        sub_title: Some(format_url(url)),
+        sub_title: Some(case is_scrapbox_url(url) {
+          True -> "/" <> p
+          False -> format_url(url)
+        }),
         auto_complete_text: Some(auto_complete_text),
         title_highlight_data: Some(highlight),
         glyph: None,
@@ -198,11 +207,19 @@ fn dup(a: help.Help, b: help.Help) {
   a.project == b.project && a.page == b.page && a.content == b.content
 }
 
-fn pages_to_helps(project: scrapbox.ScrapboxProject) {
+fn pages_to_helps(
+  project: scrapbox.ScrapboxProject,
+  ignore_pattern: regexp.Regexp,
+) {
   project.pages
-  |> list.map(fn(page) {
-    let title = page.title
-    let url = scrapbox_url(project.name, title)
-    help.ScrapUrlHelp(project.name, title, title, url)
+  |> list.filter_map(fn(page) {
+    case regexp.check(ignore_pattern, page.title) {
+      True -> Error(Nil)
+      False -> {
+        let title = page.title
+        let url = scrapbox_url(project.name, title)
+        Ok(help.ScrapUrlHelp(project.name, title, title, url))
+      }
+    }
   })
 }
