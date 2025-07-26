@@ -3,16 +3,15 @@ import ffi/jsonrpc
 import gleam/list
 import gleam/option.{None}
 import plugin/context
-import plugin/helper
 import plugin/query
 import plugin/response
 import settings
 
 pub fn make_result(
-  connection: jsonrpc.MessageConnection,
+  _connection: jsonrpc.MessageConnection,
   query: query.Query,
-  settings: settings.Settings,
-  context: context.Context,
+  _settings: settings.Settings,
+  _context: context.Context,
 ) -> List(response.JSONRPCResponse) {
   fuse.search(
     [
