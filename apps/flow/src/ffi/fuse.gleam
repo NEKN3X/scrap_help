@@ -1,21 +1,26 @@
 import gleam/javascript/array
-
-type FuseOptionsJs {
-  FuseOptionsJs(keys: array.Array(String))
-}
+import gleam/json
 
 pub type FuseOptions {
   FuseOptions(keys: List(String))
+}
+
+pub type FuseResult(a) {
+  FuseResult(item: a)
 }
 
 @external(javascript, "./dist/fuse_ffi.js", "search")
 fn search_js(
   items: array.Array(a),
   query: String,
-  options: FuseOptionsJs,
-) -> array.Array(a)
+  options: json.Json,
+) -> array.Array(FuseResult(a))
 
-pub fn search(items: List(a), query: String, options: FuseOptions) -> List(a) {
-  let options = FuseOptionsJs(options.keys |> array.from_list)
+pub fn search(
+  items: List(a),
+  query: String,
+  options: FuseOptions,
+) -> List(FuseResult(a)) {
+  let options = json.object([#("keys", json.array(options.keys, json.string))])
   search_js(items |> array.from_list, query, options) |> array.to_list
 }
