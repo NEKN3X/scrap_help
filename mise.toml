@@ -1,6 +1,8 @@
 [tools]
+erlang = "latest"
 node = "latest"
 pnpm = "latest"
+gleam = "latest"
 
 [tasks]
 build = "pnpm run build"
@@ -8,3 +10,4 @@ dev = "pnpm run dev"
 lint = "pnpm run lint"
 format = "pnpm run format"
 check-types = "pnpm run check-types"
+test = "pnpm run test"

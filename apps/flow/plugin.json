@@ -1,0 +1,12 @@
+{
+  "ID": "661ea2d72849373g3139965kx245d1a4",
+  "ActionKeyword": "g",
+  "Name": "ScrapHelp",
+  "Description": "Scrapboxページを検索する",
+  "Author": "NEKN3X",
+  "Version": "1.0.0",
+  "Language": "javascript_v2",
+  "Website": "https://github.com/NEKN3X/scrap_help",
+  "ExecuteFileName": "./index.js",
+  "IcoPath": "assets/cosense.png"
+}

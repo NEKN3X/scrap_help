@@ -1,0 +1,14 @@
+{
+  "name": "flow_plugin",
+  "version": "1.0.0",
+  "packageManager": "pnpm@10.12.4",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc && gleam build",
+    "test": "gleam test"
+  },
+  "dependencies": {
+    "fuse.js": "^7.1.0",
+    "vscode-jsonrpc": "^8.2.1"
+  }
+}

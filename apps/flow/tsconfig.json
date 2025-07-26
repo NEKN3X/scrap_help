@@ -1,0 +1,12 @@
+{
+  "extends": "@repo/config/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/ffi/ts/*"]
+    },
+    "outDir": "src/ffi/dist"
+  },
+  "include": ["src/ffi/ts"],
+  "exclude": ["**/*.test.ts"]
+}
