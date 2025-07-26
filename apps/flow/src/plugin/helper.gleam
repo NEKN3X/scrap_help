@@ -1,6 +1,7 @@
 import ffi/jsonrpc
 import gleam/dynamic
 import gleam/dynamic/decode
+import gleam/javascript/promise
 import gleam/json
 import plugin/context
 import plugin/query
@@ -23,6 +24,22 @@ pub fn query(
   let assert Ok(settings) = decode.run(settings, settings_decoder)
   let result = f(query, settings) |> response.to_json
   json.object([#("result", json.preprocessed_array(result))])
+}
+
+pub fn query_async(
+  connection,
+  settings_decoder,
+  f: fn(query.Query, settings) ->
+    promise.Promise(List(response.JSONRPCResponse)),
+) {
+  use query, settings <- jsonrpc.on_query_async(connection)
+  let assert Ok(query) = query.decode(query)
+  let assert Ok(settings) = decode.run(settings, settings_decoder)
+  f(query, settings)
+  |> promise.map(response.to_json)
+  |> promise.map(fn(result) {
+    json.object([#("result", json.preprocessed_array(result))])
+  })
 }
 
 pub fn on(connection, method, handler: fn(dynamic.Dynamic) -> Nil) {

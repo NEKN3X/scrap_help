@@ -6,13 +6,13 @@ import gleam/regexp
 import gleam/result
 
 pub type Help {
-  ScrapTextHelp(project: String, page: String, command: String, text: String)
-  ScrapUrlHelp(project: String, page: String, command: String, url: String)
+  ScrapTextHelp(project: String, page: String, command: String, content: String)
+  ScrapUrlHelp(project: String, page: String, command: String, content: String)
   ScrapUrlHelpWithTitle(
     project: String,
     page: String,
     command: String,
-    url: String,
+    content: String,
     title: String,
   )
 }
@@ -107,5 +107,16 @@ pub fn set_command(help: Help, command: String) {
       ScrapUrlHelp(project, page, command, url)
     ScrapUrlHelpWithTitle(project, page, _, url, title) ->
       ScrapUrlHelpWithTitle(project, page, command, url, title)
+  }
+}
+
+pub fn set_content(help: Help, content: String) {
+  case help {
+    ScrapTextHelp(project, page, command, _) ->
+      ScrapTextHelp(project, page, command, content)
+    ScrapUrlHelp(project, page, command, _) ->
+      ScrapUrlHelp(project, page, command, content)
+    ScrapUrlHelpWithTitle(project, page, command, _, title) ->
+      ScrapUrlHelpWithTitle(project, page, command, content, title)
   }
 }

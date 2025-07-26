@@ -7,7 +7,7 @@ import settings
 pub fn main() -> Nil {
   let connection = jsonrpc.create_connection()
   helper.initialize(connection, fn(context) {
-    use query, settings <- helper.query(connection, settings.decoder())
+    use query, settings <- helper.query_async(connection, settings.decoder())
     make_result.make_result(connection, query, settings, context)
   })
 

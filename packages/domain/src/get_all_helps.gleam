@@ -22,7 +22,7 @@ type ProjectWithHelps {
   ProjectWithHelps(project: scrapbox.ScrapboxProject, helps: List(help.Help))
 }
 
-pub fn replace_glossary(glossary: public_types.Glossary, text: String) {
+fn replace_glossary(glossary: public_types.Glossary, text: String) {
   let replace = fn(pair, text) {
     let #(key, value) = pair
     string.replace(text, "{" <> key <> "}", value)
@@ -37,12 +37,14 @@ pub fn replace_glossary(glossary: public_types.Glossary, text: String) {
 }
 
 fn expand_glossary(project: ProjectWithGlossaryAndHelps, glossary) {
-  let helps =
-    project.helps
-    |> list.map(fn(help) {
-      let replaced = replace_glossary(glossary, help.command)
-      help.set_command(help, replaced)
-    })
+  let helps = {
+    use help <- list.map(project.helps)
+    let replaced_command = replace_glossary(glossary, help.command)
+    let replaced_content = replace_glossary(glossary, help.content)
+    help
+    |> help.set_command(replaced_command)
+    |> help.set_content(replaced_content)
+  }
   ProjectWithHelps(project.project, helps)
 }
 

@@ -6,7 +6,7 @@ import gleam/javascript/promise
 import gleam/list
 import gleam/result
 
-const timeout = 60_000
+const timeout = 10_000
 
 fn cache(db: db.Schema) {
   case date.now() - db.timestamp {
@@ -36,7 +36,7 @@ pub fn get_projects(projects, sid) {
             project_cache.pages
             |> list.find(fn(p) { p.title == title.title })
           case page_cache {
-            Ok(page) if page.updated <= title.updated ->
+            Ok(page) if page.updated == title.updated ->
               promise.resolve(Ok(page))
             _ -> scrapbox_api.fetch_page(project, title.title, sid)
           }

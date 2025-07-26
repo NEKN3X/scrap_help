@@ -19,11 +19,6 @@ fn some_str() -> Parser(List(String)) {
   pure([s |> char.join])
 }
 
-fn many_str() -> Parser(List(String)) {
-  use s <- bind(parser.many(letter()))
-  pure([s |> char.join])
-}
-
 fn product(xs: List(a), ys: List(b)) -> List(#(a, b)) {
   xs |> list.flat_map(fn(x) { ys |> list.map(fn(y) { #(x, y) }) })
 }
@@ -33,6 +28,7 @@ fn concat_pair(p: #(String, String)) -> String {
   x <> y
 }
 
+/// literal := factor (*literal | ε)
 pub fn literal() -> Parser(List(String)) {
   use fac <- bind(factor())
   {
@@ -42,16 +38,18 @@ pub fn literal() -> Parser(List(String)) {
   |> alt(pure(fac))
 }
 
+/// synonym := (literal | 空文字 (+"|"synonym | ε)
 pub fn synonym() -> Parser(List(String)) {
-  use fac <- bind(factor() |> alt(many_str()))
+  use lit <- bind(literal() |> alt(pure([""])))
   {
     use _ <- bind(symbol("|"))
     use syn <- bind(synonym())
-    pure(list.append(fac, syn))
+    pure(list.append(lit, syn))
   }
-  |> alt(pure(fac))
+  |> alt(pure(lit))
 }
 
+/// factor := "("synonym")" | some_str
 pub fn factor() -> Parser(List(String)) {
   {
     use _ <- bind(parser.string("("))
