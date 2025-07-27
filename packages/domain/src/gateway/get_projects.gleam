@@ -7,7 +7,7 @@ import gleam/list
 import gleam/option
 import gleam/result
 
-pub fn get_projects(projects: List(String), sid) {
+pub fn usecase(projects: List(String), sid) {
   let db = result.unwrap(db.read(), db.default())
   db.read_cache(db, date.now(), 1000 * 60)
   |> option.map(fn(cache) { promise.resolve(cache.projects) })
@@ -38,5 +38,8 @@ pub fn get_projects(projects: List(String), sid) {
     })
     |> promise.await_list
     |> promise.map(result.values)
+  })
+  |> promise.tap(fn(x) {
+    db.write(db.Schema(projects: x, timestamp: date.now()))
   })
 }

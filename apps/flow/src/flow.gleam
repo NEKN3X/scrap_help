@@ -24,8 +24,8 @@ pub fn main() -> Nil {
 
   helper.on(connection, "show_message", fn(params) {
     {
-      case decode.run(params, decode.string) {
-        Ok(message) -> helper.show_message(connection, message)
+      case decode.run(params, decode.list(decode.string)) {
+        Ok([text]) -> helper.show_message(connection, text)
         _ -> Nil
       }
     }
@@ -33,8 +33,8 @@ pub fn main() -> Nil {
 
   helper.on(connection, "copy_text", fn(params) {
     {
-      case decode.run(params, decode.string) {
-        Ok(message) -> helper.copy_text(connection, message)
+      case decode.run(params, decode.list(decode.string)) {
+        Ok([text]) -> helper.copy_text(connection, text)
         _ -> Nil
       }
     }

@@ -46,7 +46,7 @@ pub fn extract_help_with_content(
         project_name,
         page_name,
         command: command,
-        url: "https://scrapbox.io" <> path,
+        url: scrapbox.scrapbox_url_with_path(path),
       )
     })
     |> option.or({
@@ -55,7 +55,7 @@ pub fn extract_help_with_content(
         project_name,
         page_name,
         command: command,
-        url: "https://scrapbox.io/" <> project_name <> "/" <> page,
+        url: scrapbox.scrapbox_url(project_name, option.Some(page)),
       )
     })
   })
@@ -94,7 +94,7 @@ pub fn extract_bookmark_help(
       project: project_name,
       page: page_name,
       command: path,
-      url: "https://scrapbox.io" <> path,
+      url: scrapbox.scrapbox_url_with_path(path),
     )
   })
   |> option.or({
@@ -103,7 +103,7 @@ pub fn extract_bookmark_help(
       project: project_name,
       page: page_name,
       command: project_name <> "/" <> page,
-      url: "https://scrapbox.io/" <> project_name <> "/" <> page,
+      url: scrapbox.scrapbox_url(project_name, option.Some(page)),
     )
   })
 }

@@ -1,6 +1,7 @@
 import gleam/option
 import gleam/pair
 import gleam/regexp
+import gleam/string
 
 pub type ScrapboxTitle {
   ScrapboxTitle(id: String, title: String, updated: Int)
@@ -88,4 +89,19 @@ pub fn extract_external_page_link(input) {
 pub fn extract_internal_page_link(input) {
   let assert Ok(re) = regexp.from_string("^.*\\[([^\\/].+)\\].*$")
   simple_extract_text(input, re)
+}
+
+pub fn scrapbox_url(project: String, page: option.Option(String)) {
+  case page {
+    option.Some(p) -> "https://scrapbox.io/" <> project <> "/" <> p
+    option.None -> "https://scrapbox.io/" <> project
+  }
+}
+
+pub fn scrapbox_url_with_path(path) {
+  "https://scrapbox.io" <> path
+}
+
+pub fn is_scrapbox_url(url: String) {
+  string.starts_with(url, "https://scrapbox.io/")
 }
