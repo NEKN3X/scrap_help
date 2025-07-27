@@ -232,7 +232,7 @@ fn ignore_page(help: help.Help, re: regexp.Regexp) {
 fn open_in_scrapbox(project: String, page: String) -> response.JSONRPCResponse {
   response.JSONRPCResponse(
     title: "Open in Scrapbox",
-    sub_title: option.Some("/" <> project <> " " <> page),
+    sub_title: option.Some("/" <> project <> "/" <> page),
     auto_complete_text: option.None,
     title_highlight_data: option.None,
     glyph: option.None,
