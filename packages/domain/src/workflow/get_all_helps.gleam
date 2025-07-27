@@ -19,7 +19,7 @@ fn extract_helps(project: scrapbox.ScrapboxProject) {
   })
 }
 
-pub fn get_all_helps(
+pub fn workflow(
   get_projects: fn(List(String)) ->
     promise.Promise(List(scrapbox.ScrapboxProject)),
 ) {
