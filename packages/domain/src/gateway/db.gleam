@@ -12,6 +12,7 @@ pub type DBError {
   FailedToReadFile
   FailedToWriteFile
   FailedToDecodeJson
+  CacheExpired
 }
 
 pub type Schema {
@@ -28,6 +29,14 @@ pub fn read() {
   |> result.try(fn(content) {
     json.parse(content, decoder()) |> result.replace_error(FailedToDecodeJson)
   })
+}
+
+pub fn read_cache(timestamp, timeout) {
+  use data <- result.try(read())
+  case data.timestamp {
+    t if timestamp - t < timeout -> Ok(data)
+    _ -> Error(CacheExpired)
+  }
 }
 
 pub fn write(data: Schema) {
