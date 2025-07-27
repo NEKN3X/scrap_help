@@ -15,8 +15,3 @@ body:
       name: ignore_title_pattern
       label: ignore_title_pattern
       defaultValue: ''
-  - type: input
-    attributes:
-      name: bookmark_pattern
-      label: bookmark_pattern
-      defaultValue: '\[#\s+\[.*\S\s+(http.*)\]\]|\[#\s+\[(http.*\S)\s+\S.*\]\]|\[#\s+\[(http.*\S)\]\]'

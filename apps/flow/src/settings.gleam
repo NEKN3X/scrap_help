@@ -8,7 +8,6 @@ pub type Settings {
     projects: List(String),
     sid: String,
     ignore_title_pattern: regexp.Regexp,
-    bookmark_pattern: regexp.Regexp,
   )
 }
 
@@ -19,9 +18,7 @@ pub fn decoder() {
     "ignore_title_pattern",
     decode.string,
   )
-  use bookmark_pattern <- decode.field("bookmark_pattern", decode.string)
   let projects = projects |> string.split(",") |> list.map(string.trim)
   let assert Ok(ignore_re) = regexp.from_string(ignore_title_pattern)
-  let assert Ok(bookmark_re) = regexp.from_string(bookmark_pattern)
-  decode.success(Settings(projects, sid, ignore_re, bookmark_re))
+  decode.success(Settings(projects, sid, ignore_re))
 }

@@ -63,7 +63,7 @@ pub fn extract_help_with_content(
 }
 
 pub fn extract_bookmark(input) {
-  let assert Ok(re) = regexp.from_string("^.*\\[#\\s+(\\S.*\\S)\\].*$")
+  let assert Ok(re) = regexp.from_string("^\\s*\\[#\\s+(\\S.*\\S)\\].*$")
   scrapbox.simple_extract_text(input, re)
 }
 

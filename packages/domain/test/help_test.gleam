@@ -92,9 +92,11 @@ pub fn extract_help_with_content_test() {
 }
 
 pub fn extract_bookmark_test() {
-  help.extract_bookmark("foo [# bookmark text] bar")
+  help.extract_bookmark(" [# bookmark text] bar")
   |> should.be_some
-  help.extract_bookmark("foo [#bookmark text] bar")
+  help.extract_bookmark(" [#bookmark text] bar")
+  |> should.be_none
+  help.extract_bookmark("foo [# bookmark text] bar")
   |> should.be_none
 }
 
@@ -105,7 +107,7 @@ pub fn extract_bookmark_help_test() {
   help.extract_bookmark_help(
     project_name,
     page_name,
-    "foo [# [https://example.com]] bar",
+    "[# [https://example.com]] bar",
   )
   |> should.equal(
     option.Some(help.BookmarkHelp(
@@ -119,7 +121,7 @@ pub fn extract_bookmark_help_test() {
   help.extract_bookmark_help(
     project_name,
     page_name,
-    "foo [# [https://example.com some text]] bar",
+    "  [# [https://example.com some text]] bar",
   )
   |> should.equal(
     option.Some(help.BookmarkHelp(
@@ -133,7 +135,7 @@ pub fn extract_bookmark_help_test() {
   help.extract_bookmark_help(
     project_name,
     page_name,
-    "foo [# [/project/page title]] bar",
+    "[# [/project/page title]] bar",
   )
   |> should.equal(
     option.Some(help.BookmarkHelp(
@@ -144,7 +146,7 @@ pub fn extract_bookmark_help_test() {
     )),
   )
 
-  help.extract_bookmark_help(project_name, page_name, "foo [# [page link]] bar")
+  help.extract_bookmark_help(project_name, page_name, "[# [page link]] bar")
   |> should.equal(
     option.Some(help.BookmarkHelp(
       project: project_name,
@@ -154,10 +156,6 @@ pub fn extract_bookmark_help_test() {
     )),
   )
 
-  help.extract_bookmark_help(
-    project_name,
-    page_name,
-    "foo [#bookmark text] bar",
-  )
+  help.extract_bookmark_help(project_name, page_name, " [#bookmark text] bar")
   |> should.be_none
 }
