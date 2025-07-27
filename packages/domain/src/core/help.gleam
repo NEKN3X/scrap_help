@@ -17,48 +17,46 @@ pub fn extract_help_with_content(
 ) -> List(Help) {
   let pairs = list.window_by_2(lines)
   list.map(pairs, fn(pair) {
-    scrapbox.extract_helpfeel(pair.0)
-    |> option.then(fn(command) {
-      {
-        use text <- option.map(scrapbox.extract_dollar_command(pair.1))
-        TextHelp(project_name, page_name, command: command, text: text)
-      }
-      |> option.or({
-        use url <- option.map(scrapbox.extract_percent_command(pair.1))
-        UrlHelp(project_name, page_name, command: command, url: url)
-      })
-      |> option.or({
-        use url <- option.map(scrapbox.extract_external_link(pair.1))
-        UrlHelp(project_name, page_name, command: command, url: url)
-      })
-      |> option.or({
-        use #(_, url) <- option.map(scrapbox.extract_external_link_with_title(
-          pair.1,
-        ))
-        UrlHelp(project_name, page_name, command: command, url: url)
-      })
-      |> option.or({
-        use url <- option.map(scrapbox.extract_url(pair.1))
-        UrlHelp(project_name, page_name, command: command, url: url)
-      })
-      |> option.or({
-        use path <- option.map(scrapbox.extract_external_page_link(pair.1))
-        UrlHelp(
-          project_name,
-          page_name,
-          command: command,
-          url: "https://scrapbox.io" <> path,
-        )
-      })
-      |> option.or({
-        use page <- option.map(scrapbox.extract_internal_page_link(pair.1))
-        UrlHelp(
-          project_name,
-          page_name,
-          command: command,
-          url: "https://scrapbox.io/" <> project_name <> "/" <> page,
-        )
-      })
+    use command <- option.then(scrapbox.extract_helpfeel(pair.0))
+    {
+      use text <- option.map(scrapbox.extract_dollar_command(pair.1))
+      TextHelp(project_name, page_name, command: command, text: text)
+    }
+    |> option.or({
+      use url <- option.map(scrapbox.extract_percent_command(pair.1))
+      UrlHelp(project_name, page_name, command: command, url: url)
+    })
+    |> option.or({
+      use url <- option.map(scrapbox.extract_external_link(pair.1))
+      UrlHelp(project_name, page_name, command: command, url: url)
+    })
+    |> option.or({
+      use #(_, url) <- option.map(scrapbox.extract_external_link_with_title(
+        pair.1,
+      ))
+      UrlHelp(project_name, page_name, command: command, url: url)
+    })
+    |> option.or({
+      use url <- option.map(scrapbox.extract_url(pair.1))
+      UrlHelp(project_name, page_name, command: command, url: url)
+    })
+    |> option.or({
+      use path <- option.map(scrapbox.extract_external_page_link(pair.1))
+      UrlHelp(
+        project_name,
+        page_name,
+        command: command,
+        url: "https://scrapbox.io" <> path,
+      )
+    })
+    |> option.or({
+      use page <- option.map(scrapbox.extract_internal_page_link(pair.1))
+      UrlHelp(
+        project_name,
+        page_name,
+        command: command,
+        url: "https://scrapbox.io/" <> project_name <> "/" <> page,
+      )
     })
   })
   |> option.values
