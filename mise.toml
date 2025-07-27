@@ -3,6 +3,8 @@ erlang = "latest"
 node = "latest"
 pnpm = "latest"
 gleam = "latest"
+spago = "latest"
+purescript = "latest"
 
 [tasks]
 build = "pnpm run build"
