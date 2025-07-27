@@ -31,7 +31,7 @@ pub type JSONRPCAction {
 pub type JSONRPCResponse {
   JSONRPCResponse(
     title: String,
-    sub_title: option.Option(String),
+    sub_title: String,
     auto_complete_text: option.Option(String),
     title_highlight_data: option.Option(List(Int)),
     glyph: option.Option(Glyph),
@@ -79,10 +79,13 @@ pub fn to_json(data: List(JSONRPCResponse)) -> List(Json) {
     None -> None
   }
   object(
-    [#("title", string(item.title)), #("jsonRPCAction", action)]
+    [
+      #("title", string(item.title)),
+      #("subTitle", string(item.sub_title)),
+      #("jsonRPCAction", action),
+    ]
     |> list.append(
       [
-        item.sub_title |> option.map(fn(x) { #("subTitle", string(x)) }),
         glyph |> option.map(fn(x) { #("glyph", object(x)) }),
         item.auto_complete_text
           |> option.map(fn(x) { #("autoCompleteText", string(x)) }),

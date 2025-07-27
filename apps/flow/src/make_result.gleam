@@ -75,7 +75,7 @@ fn text_help_to_item(result: help.Help) {
     help.TextHelp(_, _, command, text) -> {
       option.Some(response.JSONRPCResponse(
         title: command,
-        sub_title: option.Some(text),
+        sub_title: text,
         glyph: option.None,
         auto_complete_text: option.None,
         title_highlight_data: option.None,
@@ -98,7 +98,7 @@ fn url_help_to_item(result: help.Help) {
     help.UrlHelp(_, _, command, url) -> {
       option.Some(response.JSONRPCResponse(
         title: command,
-        sub_title: option.Some(cut_host(url)),
+        sub_title: cut_host(url),
         auto_complete_text: option.None,
         title_highlight_data: option.None,
         glyph: option.None,
@@ -121,7 +121,7 @@ fn bookmark_help_to_item(result: help.Help) {
     help.BookmarkHelp(_, _, command, url) -> {
       option.Some(response.JSONRPCResponse(
         title: command,
-        sub_title: option.Some(cut_host(url)),
+        sub_title: cut_host(url),
         auto_complete_text: option.None,
         title_highlight_data: option.None,
         glyph: option.None,
@@ -144,7 +144,7 @@ fn page_to_item(result: help.Help) {
     help.ScrapPage(project, page) -> {
       option.Some(response.JSONRPCResponse(
         title: page,
-        sub_title: option.Some("/" <> project),
+        sub_title: "/" <> project,
         auto_complete_text: option.None,
         title_highlight_data: option.None,
         glyph: option.None,
@@ -232,7 +232,7 @@ fn ignore_page(help: help.Help, re: regexp.Regexp) {
 fn open_in_scrapbox(project: String, page: String) -> response.JSONRPCResponse {
   response.JSONRPCResponse(
     title: "Open in Scrapbox",
-    sub_title: option.Some("/" <> project <> "/" <> page),
+    sub_title: "/" <> project <> "/" <> page,
     auto_complete_text: option.None,
     title_highlight_data: option.None,
     glyph: option.None,
