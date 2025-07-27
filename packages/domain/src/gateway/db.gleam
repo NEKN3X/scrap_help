@@ -3,6 +3,7 @@ import gateway/dto/scrapbox_project
 import gleam/dynamic/decode
 import gleam/json
 import gleam/list
+import gleam/option
 import gleam/result
 import simplifile
 
@@ -12,7 +13,6 @@ pub type DBError {
   FailedToReadFile
   FailedToWriteFile
   FailedToDecodeJson
-  CacheExpired
 }
 
 pub type Schema {
@@ -31,11 +31,10 @@ pub fn read() {
   })
 }
 
-pub fn read_cache(timestamp, timeout) {
-  use data <- result.try(read())
-  case data.timestamp {
-    t if timestamp - t < timeout -> Ok(data)
-    _ -> Error(CacheExpired)
+pub fn read_cache(schema: Schema, timestamp, timeout) {
+  case schema.timestamp {
+    t if timestamp - t < timeout -> option.Some(schema)
+    _ -> option.None
   }
 }
 
