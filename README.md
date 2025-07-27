@@ -1,4 +1,4 @@
-# ScrapHelp
+# ScrapHelp (Gleam版)
 
 - Scrapboxページを検索する機能
 - Scrapboxページに書いているヘルプ(Helpfeel記法)を検索する機能
