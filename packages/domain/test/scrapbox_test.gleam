@@ -1,4 +1,5 @@
 import core/scrapbox
+import gleam/option
 import gleeunit/should
 
 pub fn extract_helpfeel_test() {
@@ -28,50 +29,55 @@ pub fn extract_percent_command_test() {
   |> should.be_none
 }
 
+pub fn extract_link_test() {
+  scrapbox.extract_url(" http://example.com")
+  |> should.be_some
+  scrapbox.extract_url("a http://example.com ")
+  |> should.be_some
+  scrapbox.extract_url("ahttp://example.com")
+  |> should.be_some
+  scrapbox.extract_url("no link here")
+  |> should.be_none
+}
+
 pub fn extract_external_link_test() {
-  scrapbox.extract_external_link(" http://example.com")
-  |> should.be_some
-  scrapbox.extract_external_link("a http://example.com ")
-  |> should.be_some
-  scrapbox.extract_external_link("ahttp://example.com")
+  scrapbox.extract_external_link(" [http://example.com]")
   |> should.be_some
   scrapbox.extract_external_link("no link here")
   |> should.be_none
 }
 
-pub fn extract_scrapbox_external_link_test() {
-  scrapbox.extract_scrapbox_external_link(" [http://example.com]")
-  |> should.be_some
-  scrapbox.extract_scrapbox_external_link(" [http://example.com some text]")
-  |> should.be_some
-  scrapbox.extract_scrapbox_external_link(" [some text http://example.com]")
-  |> should.be_some
-  scrapbox.extract_scrapbox_external_link("no link here")
+pub fn extract_external_link_with_title_test() {
+  scrapbox.extract_external_link_with_title(" [http://example.com some text]")
+  |> should.equal(option.Some(#("some text", "http://example.com")))
+  scrapbox.extract_external_link_with_title(" [some text http://example.com]")
+  |> should.equal(option.Some(#("some text", "http://example.com")))
+  scrapbox.extract_external_link_with_title(" [http://example.com]")
   |> should.be_none
 }
 
-pub fn extract_external_scrapbox_link_test() {
-  scrapbox.extract_external_scrapbox_link(" [/project/page]")
+pub fn extract_external_page_link_test() {
+  scrapbox.extract_external_page_link(" [/project/page]")
   |> should.be_some
-  scrapbox.extract_external_scrapbox_link(" [/project/page some text]")
+  scrapbox.extract_external_page_link(" [/project/page some text]")
   |> should.be_some
-  scrapbox.extract_external_scrapbox_link(" [project/page some text]")
+  scrapbox.extract_external_page_link(" [project/page some text]")
   |> should.be_none
-  scrapbox.extract_external_scrapbox_link(" [some text /project/page]")
+  scrapbox.extract_external_page_link(" [some text /project/page]")
   |> should.be_none
-  scrapbox.extract_external_scrapbox_link("no link here")
+  scrapbox.extract_external_page_link("no link here")
   |> should.be_none
 }
 
 pub fn extract_internal_scrapbox_link_test() {
-  scrapbox.extract_internal_scrapbox_link(" [page title]")
+  scrapbox.extract_internal_page_link(" [page title]")
   |> should.be_some
-  scrapbox.extract_internal_scrapbox_link(" [page title some text]")
+  scrapbox.extract_internal_page_link(" [page title some text]")
   |> should.be_some
-  scrapbox.extract_internal_scrapbox_link(" [some text page title]")
+  scrapbox.extract_internal_page_link(" [some text page title]")
   |> should.be_some
-  scrapbox.extract_internal_scrapbox_link(" [/some text page title]")
+  scrapbox.extract_internal_page_link(" [/some text page title]")
   |> should.be_none
-  scrapbox.extract_internal_scrapbox_link("no link here")
+  scrapbox.extract_internal_page_link("no link here")
   |> should.be_none
 }

@@ -1,4 +1,5 @@
 import gleam/option
+import gleam/pair
 import gleam/regexp
 
 pub type ScrapboxTitle {
@@ -24,12 +25,23 @@ pub type ScrapboxPageLine {
   ScrapboxPageLine(id: String, text: String)
 }
 
-fn simple_extract_text(
+pub fn simple_extract_text(
   input: String,
   re: regexp.Regexp,
 ) -> option.Option(String) {
   case regexp.scan(re, input) {
     [regexp.Match(_, [option.Some(text)])] -> option.Some(text)
+    _ -> option.None
+  }
+}
+
+pub fn simple_extract_text2(
+  input: String,
+  re: regexp.Regexp,
+) -> option.Option(#(String, String)) {
+  case regexp.scan(re, input) {
+    [regexp.Match(_, [option.Some(first), option.Some(second)])] ->
+      option.Some(#(first, second))
     _ -> option.None
   }
 }
@@ -49,28 +61,31 @@ pub fn extract_percent_command(input) {
   simple_extract_text(input, re)
 }
 
-pub fn extract_external_link(input) {
+pub fn extract_url(input) {
   let assert Ok(re) = regexp.from_string("^.*(https?:\\/\\/.+\\S)(?:\\s+.*)?$")
   simple_extract_text(input, re)
 }
 
-pub fn extract_scrapbox_external_link(input) {
+pub fn extract_external_link(input) {
   let assert Ok(re) = regexp.from_string("^.*\\[(https?:\\/\\/[^\\s]*)\\].*$")
-  let assert Ok(re2) =
-    regexp.from_string("^.*\\[.*\\S\\s+(https?:\\/\\/[^\\s]*)\\].*$")
-  let assert Ok(re3) =
-    regexp.from_string("^.*\\[(https?:\\/\\/[^\\s]*)\\s+\\S.*\\].*$")
   simple_extract_text(input, re)
-  |> option.or(simple_extract_text(input, re2))
-  |> option.or(simple_extract_text(input, re3))
 }
 
-pub fn extract_external_scrapbox_link(input) {
+pub fn extract_external_link_with_title(input) {
+  let assert Ok(re) =
+    regexp.from_string("^.*\\[(.*\\S)\\s+(https?:\\/\\/[^\\s]*)\\].*$")
+  let assert Ok(re2) =
+    regexp.from_string("^.*\\[(https?:\\/\\/[^\\s]*)\\s+(\\S.*)\\].*$")
+  simple_extract_text2(input, re)
+  |> option.or(simple_extract_text2(input, re2) |> option.map(pair.swap))
+}
+
+pub fn extract_external_page_link(input) {
   let assert Ok(re) = regexp.from_string("^.*\\[(\\/.+)\\].*$")
   simple_extract_text(input, re)
 }
 
-pub fn extract_internal_scrapbox_link(input) {
+pub fn extract_internal_page_link(input) {
   let assert Ok(re) = regexp.from_string("^.*\\[([^\\/].+)\\].*$")
   simple_extract_text(input, re)
 }
