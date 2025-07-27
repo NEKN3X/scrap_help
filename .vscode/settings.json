@@ -52,5 +52,8 @@
     "scss",
     "pcss",
     "postcss"
-  ]
+  ],
+  "debug.javascript.defaultRuntimeExecutable": {
+    "pwa-node": "c:\\users\\mallow\\appdata\\local\\mise\\shims\\node"
+  }
 }
