@@ -83,7 +83,9 @@ fn text_help_to_item(result: help.Help) {
         json_rpc_action: response.JSONRPCAction("copy_text", [
           response.StringParam(text),
         ]),
-        context_data: option.Some([]),
+        context_data: option.Some([
+          open_in_scrapbox(result.project, result.page),
+        ]),
         score: option.None,
       ))
     }
@@ -104,7 +106,9 @@ fn url_help_to_item(result: help.Help) {
         json_rpc_action: response.JSONRPCAction("open_url", [
           response.StringParam(url),
         ]),
-        context_data: option.Some([]),
+        context_data: option.Some([
+          open_in_scrapbox(result.project, result.page),
+        ]),
         score: option.None,
       ))
     }
@@ -125,7 +129,9 @@ fn bookmark_help_to_item(result: help.Help) {
         json_rpc_action: response.JSONRPCAction("open_url", [
           response.StringParam(url),
         ]),
-        context_data: option.Some([]),
+        context_data: option.Some([
+          open_in_scrapbox(result.project, result.page),
+        ]),
         score: option.None,
       ))
     }
@@ -221,4 +227,20 @@ fn ignore_page(help: help.Help, re: regexp.Regexp) {
       }
     _ -> Ok(help)
   }
+}
+
+fn open_in_scrapbox(project: String, page: String) -> response.JSONRPCResponse {
+  response.JSONRPCResponse(
+    title: "Open in Scrapbox",
+    sub_title: option.Some("/" <> project <> " " <> page),
+    auto_complete_text: option.None,
+    title_highlight_data: option.None,
+    glyph: option.None,
+    ico_path: option.Some("assets/note-sticky-regular-full.png"),
+    json_rpc_action: response.JSONRPCAction("open_url", [
+      response.StringParam(scrapbox.scrapbox_url(project, option.Some(page))),
+    ]),
+    context_data: option.Some([]),
+    score: option.None,
+  )
 }
